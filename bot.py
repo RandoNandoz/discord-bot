@@ -27,7 +27,7 @@ class MyClient(discord.Client):
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.id == 215994239920766977:
-            if after.nick != before.nick and before.nick not in userNickArray:
+            if after.nick != before.nick and after.nick not in userNickArray:
                 await after.edit(nick=userNickArray[randint(0, len(userNickArray) - 1)])
                 print("Changing username..")
 
