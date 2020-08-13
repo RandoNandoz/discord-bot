@@ -1,10 +1,49 @@
-import discord
-import discord.ext
-import asyncio
 import os
+import asyncio
 from random import randint
-userNickArray = [
+import discord
 
+# Represented in seconds, currently at 3600 seconds, which is an hour.
+NicknameChangeInterval = 3600
+
+# The potential names for the user who uses `~!start` will have their name changed.
+# The type of this array must be a string.
+UserNickArray = [
+    # Place the the potential names here, comma seperated.
+    # e.g.
+    # "Bob is a great man",
+    # "Absolute legend",
+    # "Alexa, play despacito"
+]
+
+UserToChangeNickArray = [
+    # Enter user ids here, also comma seperated
+    # e.g. (These are random user ids btw.)
+    # 2224900345782567455,
+    # 2224900608345567485,
+    # 270904126974540956,
+    # 232634536343643932
+]
+
+# This is the array of userids which will be considered immutable.
+# The type of this array must be an int.
+NoChangeArray = [
+    # Enter user ids here, also comma seperated
+    # e.g. (These are random user ids btw.)
+    # 2224900345782567455,
+    # 2224900608345567485,
+    # 270904126974540956,
+    # 232634536343643932
+]
+# Array for people who has a permission level above the bot's.
+# The type of this array must also be an int.
+UserPrivAboveBotArray = [
+    # Enter user ids here, also comma seperated
+    # e.g. (These are random user ids btw.)
+    # 2224900345782567455,
+    # 2224900608345567485,
+    # 270904126974540956,
+    # 232634536343643932
 ]
 
 
@@ -18,19 +57,31 @@ class MyClient(discord.Client):
             return
 
         if msg.content.startswith("~!start"):
-            while True:
-
-                member: discord.Member = msg.author
-                await member.edit(nick=userNickArray[randint(0, len(userNickArray) - 1)])
-                print("Changing username...")
-                await asyncio.sleep(3000)
+            # TODO: Make this toggleable.
+            # First checks whether the user has privs above the bot - usually the owner only.
+            if msg.author not in UserPrivAboveBotArray:
+                while True:
+                    # Changes the username to something random in the UserNickArray
+                    member: discord.Member = msg.author
+                    await member.edit(nick=UserNickArray[randint(0, len(UserNickArray) - 1)])
+                    print("Changing nickname...")
+                    await asyncio.sleep(NicknameChangeInterval)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if before.id == 215994239920766977:
-            if after.nick != before.nick and after.nick not in userNickArray:
-                await after.edit(nick=userNickArray[randint(0, len(userNickArray) - 1)])
-                print("Changing username..")
+        # This prevents the user's name being changed, but instead being changed to the UserNickArray.
+        if before.id in UserToChangeNickArray and before.id not in UserPrivAboveBotArray:
+            # If the user's name is not the same, and their name is not equal to something in the array,
+            # change it to a random item in the array.
+            if after.nick != before.nick and after.nick not in UserNickArray:
+                await after.edit(nick=UserNickArray[randint(0, len(UserNickArray) - 1)])
+                print("Changing nickname...")
+        # Checks whether the user is in the array of users forbidden from changing their nickname.
+        elif before.id in NoChangeArray:
+            if after.nick != before.nick:
+                await after.edit(nick=before.nick)
+                print("Changing nickname...")
 
 
+# Logs into the discord API. The token should be an environment variable.
 client = MyClient()
 client.run(os.environ["DISCORD_TOKEN"])
