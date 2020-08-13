@@ -22,6 +22,7 @@ async def setnicknames(ctx: commands.Context, *args):
     USER_NICKNAME_ARRAY.clear()
     USER_NICKNAME_ARRAY = list(map(str, args))
     print(f"Set USER_NICKNAME_ARRAY to: {USER_NICKNAME_ARRAY}")
+    ctx.send(f"SUCCESS: Set the username list to {USER_NICKNAME_ARRAY}")
 
 
 @bot.command()
@@ -49,6 +50,7 @@ async def iterateuser(ctx: commands.Context, user: str, interval: str, go_flag: 
         ctx.guild, user)
 
     if USER_NICKNAME_ARRAY is not None and USER_NICKNAME_ARRAY != list() and member is not None:
+        ctx.send(f"Started.")
         while bool(strtobool(go_flag)):
             await member.edit(nick=USER_NICKNAME_ARRAY[randint(0, len(USER_NICKNAME_ARRAY) - 1)])
             print("Nickname changed...")
