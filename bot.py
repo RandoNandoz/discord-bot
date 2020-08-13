@@ -46,6 +46,14 @@ UserPrivAboveBotArray = [
     # 232634536343643932
 ]
 
+SpecialUIDArray = [
+    # Special UIDs for the "Special Array"
+]
+
+SpecialUserNickArray = [
+    # Special users.
+]
+
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -70,6 +78,12 @@ class MyClient(discord.Client):
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         # This prevents the user's name being changed, but instead being changed to the UserNickArray.
         if before.id in UserToChangeNickArray and before.id not in UserPrivAboveBotArray:
+            # If the user's name is not the same, and their name is not equal to something in the array,
+            # change it to a random item in the array.
+            if after.nick != before.nick and after.nick not in UserNickArray:
+                await after.edit(nick=UserNickArray[randint(0, len(UserNickArray) - 1)])
+                print("Changing nickname...")
+        elif before.id in SpecialUIDArray and before.id not in SpecialUserNickArray:
             # If the user's name is not the same, and their name is not equal to something in the array,
             # change it to a random item in the array.
             if after.nick != before.nick and after.nick not in UserNickArray:
