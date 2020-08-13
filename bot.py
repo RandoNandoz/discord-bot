@@ -20,7 +20,7 @@ async def setnicknames(ctx: commands.Context, *args):
         return
     global USER_NICKNAME_ARRAY
     USER_NICKNAME_ARRAY.clear()
-    USER_NICKNAME_ARRAY = list(map(str, [int(i) for i, in args]))
+    USER_NICKNAME_ARRAY = list(map(str, args))
     print(f"Set USER_NICKNAME_ARRAY to: {USER_NICKNAME_ARRAY}")
 
 
