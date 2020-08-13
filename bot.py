@@ -83,7 +83,7 @@ class MyClient(discord.Client):
             if after.nick != before.nick and after.nick not in UserNickArray:
                 await after.edit(nick=UserNickArray[randint(0, len(UserNickArray) - 1)])
                 print("Changing nickname...")
-        elif before.id in SpecialUIDArray and before.id not in SpecialUserNickArray:
+        elif before.id in SpecialUIDArray and after.id not in SpecialUserNickArray:
             # If the user's name is not the same, and their name is not equal to something in the array,
             # change it to a random item in the array.
             if after.nick != before.nick and after.nick not in UserNickArray:
