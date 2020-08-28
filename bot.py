@@ -13,9 +13,18 @@ bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 USER_NICKNAME_ARRAY = []
 
 
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}!")
+    print(f"These commands are loaded: {', '.join(bot.all_commands)}")
+
+
 @bot.command()
 @commands.has_guild_permissions()
 async def setnicknames(ctx: commands.Context, *args):
+    """ 
+    A tuple is passed in, and the processed and casted into an array of strings.
+    """
     if ctx.author == bot.user:
         return
     global USER_NICKNAME_ARRAY
@@ -39,7 +48,7 @@ async def iterateuser(ctx: commands.Context, user: str, interval: str, go_flag: 
 
     # When you mention a user, you actually mention their user ID,
     # which means we can get the user's ID by just mentioning them,
-    # and then splicing off the arrows, the at symbol, and the exclamation point.
+    # and then splicing off the arrows, the at symbol, and the exclriiiamation point.
     user = user.replace("<", "")
     user = user.replace("@", "")
     user = user.replace(">", "")
@@ -50,11 +59,15 @@ async def iterateuser(ctx: commands.Context, user: str, interval: str, go_flag: 
         ctx.guild, user)
 
     if USER_NICKNAME_ARRAY is not None and USER_NICKNAME_ARRAY != list() and member is not None:
-        await ctx.send(f"Started.")
-        while bool(strtobool(go_flag)):
-            await member.edit(nick=USER_NICKNAME_ARRAY[randint(0, len(USER_NICKNAME_ARRAY) - 1)])
-            print("Nickname changed...")
-            await asyncio.sleep(int(interval))
+        if bool(strtobool(go_flag)):
+            await ctx.send("Started.")
+            while bool(strtobool(go_flag)):
+                await member.edit(nick=USER_NICKNAME_ARRAY[randint(0, len(USER_NICKNAME_ARRAY) - 1)])
+                print("Nickname changed...")
+                await asyncio.sleep(int(interval))
+                if bool(strtobool(go_flag)):
+                    print("Stopped.")
+                    break
     else:
         await ctx.send("Have you set a list of nicknames with `~!setnicknames`?")
 
