@@ -12,6 +12,8 @@ bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
 USER_NICKNAME_ARRAY = []
 
+FROZEN_USERS_ARRAY = []
+
 
 @bot.event
 async def on_ready():
@@ -22,7 +24,7 @@ async def on_ready():
 @bot.command()
 @commands.has_guild_permissions()
 async def setnicknames(ctx: commands.Context, *args):
-    """ 
+    """      
     A tuple is passed in, and the processed and casted into an array of strings.
     """
     if ctx.author == bot.user:
@@ -33,6 +35,32 @@ async def setnicknames(ctx: commands.Context, *args):
     print(f"Set USER_NICKNAME_ARRAY to: {USER_NICKNAME_ARRAY}")
     await ctx.send(f"SUCCESS: Set the username list to {USER_NICKNAME_ARRAY}")
 
+
+@bot.command()
+@commands.has_guild_permissions()
+async def freezeuser(ctx: commands.Context, user: str, rm: bool):
+    global FROZEN_USERS_ARRAY
+    if ctx.author == bot.user:
+        return
+
+    user = user.replace("<", "")
+    user = user.replace("@", "")
+    user = user.replace(">", "")
+    user = user.replace("!", "")
+    user = int(user)
+
+    if user in FROZEN_USERS_ARRAY:
+        return
+    else:
+        FROZEN_USERS_ARRAY.append(user)
+    
+
+
+@bot.event
+async def on_user_update(before: discord.User, after: discord.User):
+    global FROZEN_USERS_ARRAY
+    if discord.User in FROZEN_USERS_ARRAY:
+        
 
 @bot.command()
 @commands.has_guild_permissions()
@@ -69,6 +97,6 @@ async def iterateuser(ctx: commands.Context, user: str, interval: str, go_flag: 
                     print("Stopped.")
                     break
     else:
-        await ctx.send("Have you set a list of nicknames with `~!setnicknames`?")
+        await ctx.send(f"Have you set a list of nicknames with `{COMMAND_PREFIX}setnicknames`?")
 
 bot.run(environ["DISCORD_TOKEN"])
